@@ -1,4 +1,4 @@
-package github_service
+package model
 
 type RepositoryModel struct {
 	Id       uint64 `json:"id"`

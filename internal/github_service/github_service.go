@@ -3,6 +3,8 @@ package github_service
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/jordansimsmith/github-backup/internal/model"
 )
 
 type GitHubService struct {
@@ -14,7 +16,7 @@ func NewGitHubService(username, token string) *GitHubService {
 	return &GitHubService{username, token}
 }
 
-func (g *GitHubService) FetchRepositories() ([]RepositoryModel, error) {
+func (g *GitHubService) FetchRepositories() ([]model.RepositoryModel, error) {
 	// construct request
 	url := "https://api.github.com/user/repos"
 	req, err := http.NewRequest("GET", url, nil)
@@ -31,7 +33,7 @@ func (g *GitHubService) FetchRepositories() ([]RepositoryModel, error) {
 	}
 
 	// parse response
-	var repositories []RepositoryModel
+	var repositories []model.RepositoryModel
 	if err := json.NewDecoder(resp.Body).Decode(&repositories); err != nil {
 		return nil, err
 	}
