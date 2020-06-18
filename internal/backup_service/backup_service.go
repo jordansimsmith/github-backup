@@ -30,20 +30,26 @@ func NewBackupService(backupDirectory string) (*BackupService, error) {
 }
 
 func (b *BackupService) BackupRepositories(repositoryModels []model.RepositoryModel) error {
+	// create backup directory
+	if _, err := os.Stat(b.BackupDirectory); os.IsNotExist(err) {
+		os.MkdirAll(b.BackupDirectory, os.ModePerm)
+	}
+	os.Chdir(b.BackupDirectory)
+
 	// map models to Repository structs
 	repositories := make([]Repository, 0)
 	for _, repositoryModel := range repositoryModels {
-		repositories = append(repositories, *NewRepository(repositoryModel.SSHUrl))
+		repository := NewRepository(repositoryModel.Id, repositoryModel.Name, repositoryModel.SSHUrl)
+		repositories = append(repositories, *repository)
 	}
 
 	// backup each repository concurrently
 	results := make(chan error)
-	defer close(results)
 	for _, repository := range repositories {
 
 		go func(r Repository) {
 			// attempt backup
-			results <- r.Backup()
+			results <- r.Backup(b.BackupDirectory)
 		}(repository)
 	}
 
@@ -53,6 +59,7 @@ func (b *BackupService) BackupRepositories(repositoryModels []model.RepositoryMo
 			return err
 		}
 	}
+	close(results)
 
 	// success
 	return nil

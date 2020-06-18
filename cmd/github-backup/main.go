@@ -23,17 +23,17 @@ func main() {
 	gitHubService := github_service.NewGitHubService(config.Username, config.Token)
 	repositories, err := gitHubService.FetchRepositories()
 	if err != nil {
-		log.Fatal("could not fetch repositories", err)
+		log.Fatal("could not fetch repositories: ", err)
 	}
 	fmt.Println("fetched repositories")
 
 	// backup repositories
 	backupService, err := backup_service.NewBackupService(config.BackupDirectory)
 	if err != nil {
-		log.Fatal("could not initialise backup service", err)
+		log.Fatal("could not initialise backup service: ", err)
 	}
 	if err := backupService.BackupRepositories(repositories); err != nil {
-		log.Fatal("could not backup one or more repositories", err)
+		log.Fatal("could not backup one or more repositories: ", err)
 	}
 
 	// success
