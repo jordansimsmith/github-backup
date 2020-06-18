@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	fmt.Println("github-backup is starting")
+	fmt.Println("github backup is starting")
 
 	// read in config
 	config, err := config.ParseConfig()
@@ -18,7 +18,6 @@ func main() {
 		log.Fatal("could not parse config file: ", err)
 	}
 	fmt.Println("parsed config file")
-	fmt.Println(config)
 
 	// read repositories
 	gitHubService := github_service.NewGitHubService(config.Username, config.Token)
@@ -27,7 +26,6 @@ func main() {
 		log.Fatal("could not fetch repositories", err)
 	}
 	fmt.Println("fetched repositories")
-	fmt.Println(repositories)
 
 	// backup repositories
 	backupService, err := backup_service.NewBackupService(config.BackupDirectory)
@@ -39,5 +37,6 @@ func main() {
 	}
 
 	// success
+	fmt.Printf("backed up %d repositories\n", len(repositories))
 	fmt.Println("github backup successful")
 }
